@@ -1,0 +1,19 @@
+name: Node.js CI/CD Pipeline
+on:
+  push:
+jobs:
+  build:
+   runs-on : ubuntu-latest
+   steps:
+     - name: Checkout code
+       uses: actions/checkout@v4
+       with:
+         repository: ${{ github.event.repository.full_name }}
+         token: ${{ secrets.GITHUB_TOKEN }}
+     - name: Start Docker Compose
+       run: docker-compose up -d --build
+     - name: show running containers
+       run: docker ps
+     - name: show loges if failed
+       if: failure()
+       run: docker compose logs
