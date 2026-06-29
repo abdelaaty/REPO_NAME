@@ -11,7 +11,7 @@ jobs:
          repository: ${{ github.event.repository.full_name }}
          token: ${{ secrets.GITHUB_TOKEN }}
      - name: Start Docker Compose
-       run: docker-compose up -d --build
+       run: docker compose up -d --build
      - name: show running containers
        run: docker ps
      - name: show loges if failed
