@@ -1,32 +1,37 @@
 import "dotenv/config";
-import app from './app.js';
-import DbConnection from './DB/models/connection.js';
+import app from "./app.js";
+import DbConnection from "./DB/models/connection.js";
 
-console.log(process.env.MYSQL_HOST);
-async function startServer(){
+const PORT = process.env.APP_PORT || 3000;
 
- try {
+async function connectWithRetry(retries = 10) {
+  while (retries > 0) {
+    try {
+      const connection = await DbConnection.getConnection();
+      console.log("✅ Database connected");
+      connection.release();
+      return;
+    } catch (err) {
+      retries--;
+      console.log(`Database not ready. Retrying... (${retries} retries left)`);
+      await new Promise(resolve => setTimeout(resolve, 3000));
+    }
+  }
 
-   const connection = await DbConnection.getConnection();
-
-   console.log("Database connected");
-
-   connection.release();
-
-
-   app.listen(3000,()=>{
-     console.log("Server running");
-   });
-
-
- } catch(error){
-
-   console.error(error);
-   process.exit(1);
-
- }
-
+  throw new Error("Could not connect to database.");
 }
 
+async function startServer() {
+  try {
+    await connectWithRetry();
+
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+    });
+  } catch (err) {
+    console.error(err);
+    process.exit(1);
+  }
+}
 
 startServer();
