@@ -5,12 +5,14 @@ services:
     build: .
     ports:
       - "${APP_PORT:-3000}:3000"
+
     environment:
       MYSQL_HOST: db
       MYSQL_PORT: 3306
       MYSQL_USER: ${MYSQL_USER:-user}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-userpassword}
       MYSQL_DATABASE: ${MYSQL_DATABASE:-users}
+
     depends_on:
       db:
         condition: service_healthy
@@ -55,7 +57,6 @@ services:
     environment:
       PMA_HOST: db
       PMA_PORT: 3306
-      PMA_ARBITRARY: 0
 
     depends_on:
       db:
