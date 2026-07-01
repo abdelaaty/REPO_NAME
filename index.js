@@ -38,6 +38,7 @@ app.use('/users', userRoutes);
 // أي request يبدأ بـ /products هيتحول لملف product.routes.js
 app.use('/products', productRoutes);
 
+
 // دالة مسؤولة عن تجهيز قاعدة البيانات وتشغيل السيرفر
 async function startServer() {
     try {

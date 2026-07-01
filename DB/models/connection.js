@@ -3,6 +3,9 @@ import mysql2 from 'mysql2/promise';
 
 // createPool معناها إننا بنعمل مجموعة اتصالات بقاعدة البيانات
 // ده أفضل من فتح اتصال جديد مع كل request
+console.log("MYSQL_HOST =", process.env.MYSQL_HOST);
+console.log("MYSQL_USER =", process.env.MYSQL_USER);
+console.log("MYSQL_PASSWORD =", process.env.MYSQL_PASSWORD);
 const DbConnection = mysql2.createPool({
     // السيرفر اللي عليه MySQL
     // لو شغالين من Docker Compose، القيمة هتبقى db

@@ -61,3 +61,30 @@ export const createUser = async (req, res) => {
         return res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
+ export const updateUser = async (req, res) => {
+    const {id} = req.params;
+    const {name, email, password} = req.body;
+    
+    if (!name || !email || !password) {
+        return res.status(400).json({ error: 'Name, email, and password are required' });
+    }
+    try {
+        const [result] = await DbConnection.execute(
+            'UPDATE users SET name = ?, email = ?, password = ? WHERE id = ?',
+            [name, email, password, id]
+        );
+        
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        return res.status(200).json({ message: 'User updated' });
+    } catch (err) {
+        if (err.code === 'ER_DUP_ENTRY') {
+            return res.status(400).json({ error: 'Email already exists' });
+        }
+        console.error('Error updating user:', err);
+        return res.status(500).json({ error: 'Internal Server Error' });
+    }
+};  

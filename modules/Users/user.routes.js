@@ -3,7 +3,7 @@
 import { Router } from 'express';
 
 // بنستورد الدوال اللي هتتنفذ لما العميل يطلب مسارات المستخدمين
-import { createUser, getAllUsers } from './user.controller.js';
+import { createUser, getAllUsers,updateUser } from './user.controller.js';
 
 // بننشئ router جديد خاص بالمستخدمين
 const router = Router();
@@ -15,6 +15,8 @@ router.get('/', getAllUsers);
 // لما العميل يعمل POST على /users
 // Express هينفذ دالة createUser ويضيف مستخدم جديد
 router.post('/', createUser);
+
+router.put('/:id',updateUser);
 
 // بنصدر router عشان index.js يقدر يستخدمه
 export default router;
