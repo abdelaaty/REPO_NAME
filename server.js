@@ -1,20 +1,14 @@
 import "dotenv/config";
 import app from "./app.js";
 import DbConnection from "./DB/models/connection.js";
+import { initializeDatabase } from "./DB/init_db.js";
 
 const PORT = process.env.APP_PORT || 3000;
 
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-
-async function connectWithRetry() {
-
-  let retries = 20;
-
+async function connectWithRetry(retries = 10) {
   while (retries > 0) {
-
     try {
-
       const connection = await DbConnection.getConnection();
 
       console.log("✅ Database connected");
@@ -23,47 +17,53 @@ async function connectWithRetry() {
 
       return;
 
-    } catch (error) {
+    } catch (err) {
 
       retries--;
 
       console.log(
-        `⏳ Database not ready. retries left: ${retries}`
+        `Database not ready. Retrying... (${retries} retries left)`
       );
 
-      await sleep(3000);
+      await new Promise(resolve =>
+        setTimeout(resolve,3000)
+      );
     }
   }
 
-
-  throw new Error("❌ Database connection failed");
-
+  throw new Error("Could not connect to database.");
 }
-
 
 
 async function startServer(){
 
- try {
+  try {
 
-   await connectWithRetry();
-
-
-   app.listen(PORT, "0.0.0.0", ()=>{
-
-    console.log(`🚀 Server running on port ${PORT}`);
-
-   });
+    // نستنى mysql
+    await connectWithRetry();
 
 
- }catch(error){
+    // ننشئ database + tables
+    await initializeDatabase();
 
-   console.error(error);
+    console.log("✅ Database initialized");
 
-   process.exit(1);
 
- }
+    app.listen(PORT,"0.0.0.0",()=>{
 
+      console.log(
+        `🚀 Server running on port ${PORT}`
+      );
+
+    });
+
+
+  } catch(err){
+
+    console.error(err);
+
+    process.exit(1);
+  }
 }
 
 
