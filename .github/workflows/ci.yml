@@ -3,6 +3,7 @@ name: Node.js CI/CD Pipeline
 on:
   push:
 
+
 jobs:
   build:
 
@@ -19,11 +20,7 @@ jobs:
 
 
       - name: Show running containers
-        run: docker ps
-
-
-      - name: Show containers logs
-        run: docker compose logs --no-color
+        run: docker ps -a
 
 
       - name: Wait for API
@@ -41,9 +38,10 @@ jobs:
 
 
       - name: Run Tests
-        run: npm test
+        run: |
+          docker compose exec -T app npm test
 
 
-      - name: Show logs if failed
+      - name: Show logs
         if: failure()
         run: docker compose logs --no-color
