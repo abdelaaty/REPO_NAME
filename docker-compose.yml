@@ -1,19 +1,23 @@
 services:
+
   app:
     container_name: express-node-app-container
     build: .
+    restart: always
+
     ports:
       - "${APP_PORT:-3000}:3000"
+
     environment:
       MYSQL_HOST: db
       MYSQL_PORT: 3306
       MYSQL_USER: ${MYSQL_USER:-user}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-userpassword}
       MYSQL_DATABASE: ${MYSQL_DATABASE:-users}
+
     depends_on:
       db:
         condition: service_healthy
-    restart: true
   db:
     container_name: mysql-db-container
     image: mysql:8.0
